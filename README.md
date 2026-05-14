@@ -8,10 +8,19 @@ Packaged as `incar/` with `incar_gen.py` and the shell menu `incar-genner.sh`.
 ## Installation
 
 ```bash
-git clone https://github.com/nasrudin152-cloud/incar-tool.git
-cd incar-tool
+git clone https://github.com/nasrudin152-cloud/incar-tool.git ~/vasp-incar-generator
+cd ~/vasp-incar-generator
 pip install questionary rich   # required for interactive mode only
 ```
+
+Then add the following alias to your `~/.bashrc` for quick access:
+
+```bash
+echo "alias incar-genner='bash \$HOME/vasp-incar-generator/incar-genner.sh'" >> ~/.bashrc
+source ~/.bashrc
+```
+
+Now you can run the tool from anywhere by typing `incar-genner`.
 
 ---
 
