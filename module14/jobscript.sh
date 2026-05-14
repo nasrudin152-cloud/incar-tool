@@ -14,6 +14,61 @@ generate_pbs_script() {
         echo -e "  ${YL}[WARN]${RS} pestat not found. Please input node manually."
     fi
 
+    # --- Queue selection ---
+    echo -e "  ${BD}Available queues:${RS}"
+    echo -e "  ┌────────┬──────────┬────────────────────┬─────┬───────┐"
+    echo -e "  │ No.    │ Queue    │ Walltime           │ PPN │ State │"
+    echo -e "  ├────────┼──────────┼────────────────────┼─────┼───────┤"
+    echo -e "  │  1     │ debug    │ 30 min             │  4  │ OPEN  │"
+    echo -e "  │  2     │ short    │ 2 hours            │ 32  │ CLOSE │"
+    echo -e "  │  3     │ normal   │ 72 hours (3 days)  │ 48  │ OPEN  │"
+    echo -e "  │  4     │ fat      │ 1680 hours (70 d)  │ 64  │ OPEN  │"
+    echo -e "  │  5     │ long     │ 720 hours (30 d)   │ 96  │ OPEN  │"
+    echo -e "  └────────┴──────────┴────────────────────┴─────┴───────┘"
+    echo
+
+    read -rp "  Select queue [1-5, default 3 (normal)]: " queue_choice
+    queue_choice="${queue_choice:-3}"
+
+    case "$queue_choice" in
+        1)
+            queue_name="debug"
+            ppn=4
+            walltime="00:30:00"
+            ;;
+        2)
+            queue_name="short"
+            ppn=32
+            walltime="02:00:00"
+            echo -e "  ${YL}[WARN]${RS} Queue 'short' is currently CLOSED!"
+            ;;
+        3)
+            queue_name="normal"
+            ppn=48
+            walltime="72:00:00"
+            ;;
+        4)
+            queue_name="fat"
+            ppn=64
+            walltime="1680:00:00"
+            ;;
+        5)
+            queue_name="long"
+            ppn=96
+            walltime="720:00:00"
+            ;;
+        *)
+            echo -e "  ${YL}[WARN]${RS} Invalid choice, fallback to normal queue."
+            queue_name="normal"
+            ppn=48
+            walltime="72:00:00"
+            ;;
+    esac
+
+    echo -e "  ${GR}[INFO]${RS} Queue: ${BD}$queue_name${RS} | PPN: ${BD}$ppn${RS} | Walltime: ${BD}$walltime${RS}"
+    echo
+
+    # --- Node selection ---
     read -rp "  Node number [24] (will use node<number>.hpc.local): " node_num
     node_num="${node_num:-24}"
     if [[ "$node_num" =~ ^[0-9]+$ ]]; then
@@ -23,9 +78,7 @@ generate_pbs_script() {
         node_name="node24.hpc.local"
     fi
 
-    read -rp "  Core count ppn / mpirun -np [48]: " ppn
-    ppn="${ppn:-48}"
-
+    # --- VASP binary selection ---
     read -rp "  VASP binary type [std/gam, default std]: " vasp_type
     case "${vasp_type,,}" in
         ""|std) vasp_bin="vasp_std" ;;
@@ -36,6 +89,7 @@ generate_pbs_script() {
             ;;
     esac
 
+    # --- Output file ---
     read -rp "  Output PBS file [vasp.pbs]: " pbs_out
     pbs_out="${pbs_out:-vasp.pbs}"
 
@@ -43,8 +97,8 @@ generate_pbs_script() {
 #!/bin/bash
 #PBS -N $sys_name
 #PBS -l nodes=$node_name:ppn=$ppn
-#PBS -l walltime=9999:59:59
-#PBS -q batch
+#PBS -l walltime=$walltime
+#PBS -q $queue_name
 #PBS -j oe
 cd \$PBS_O_WORKDIR
 
