@@ -8,8 +8,8 @@ Packaged as `incar/` with `incar_gen.py` and the shell menu `incar-genner.sh`.
 ## Installation
 
 ```bash
-git clone https://github.com/HABERLO/git-practice.git
-cd git-practice
+git clone https://github.com/nasrudin152-cloud/incar-tool.git
+cd incar-tool
 pip install questionary rich   # required for interactive mode only
 ```
 
