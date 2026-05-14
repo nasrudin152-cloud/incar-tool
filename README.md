@@ -28,7 +28,10 @@ Now you can run the tool from anywhere by typing `incar-gen`.
 
 ```
 incar_gen.py          ← Python entry point
-incar/
+incar-gen.sh          ← interactive shell menu (alias target)
+requirements.txt      ← Python dependencies
+
+incar/                ← INCAR generation modules
 ├── __init__.py       ← re-exports all builders
 ├── defaults.py       ← shared element data & global INCAR defaults
 ├── poscar.py         ← POSCAR parser + OPTCELL generator
@@ -45,14 +48,23 @@ incar/
 ├── neb.py
 ├── soc.py
 └── zpe.py            ← ZPE correction (IBRION=5, NFREE=2)
-kpoints/
+
+kpoints/              ← KPOINTS generation
 ├── __init__.py       ← re-exports kgen API
 └── kgen.py           ← KPOINTS file / KSPACING wizard
-notes/
+
+potcar/               ← POTCAR generation
+├── __init__.py
+├── potgen.py         ← POTCAR builder logic
+└── potcar_gen.py     ← POTCAR entry point
+
+pbs/                  ← PBS job script generator
+└── jobscript.sh      ← queue selection + auto ppn/walltime
+
+notes/                ← Reference documentation
 ├── INCAR-cheatsheet.md          ← INCAR tags quick reference
 ├── vasp-analysis-tutorials.md   ← post-processing & analysis notes
 └── vasp-convergence-troubleshooting.md  ← convergence issue solutions
-incar-gen.sh       ← interactive shell menu
 ```
 
 ---
