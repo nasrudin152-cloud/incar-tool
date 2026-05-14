@@ -68,12 +68,16 @@ generate_pbs_script() {
     echo -e "  ${GR}[INFO]${RS} Queue: ${BD}$queue_name${RS} | PPN: ${BD}$ppn${RS} | Walltime: ${BD}$walltime${RS}"
     echo
 
-    # --- Node count ---
-    read -rp "  Number of nodes [1]: " node_count
-    node_count="${node_count:-1}"
-    if ! [[ "$node_count" =~ ^[0-9]+$ ]]; then
-        echo -e "  ${YL}[WARN]${RS} Invalid number, fallback to 1"
-        node_count=1
+    # --- Node selection ---
+    read -rp "  Node [1=default, or enter node number e.g. 24 -> node24.hpc.local]: " node_input
+    node_input="${node_input:-1}"
+    if ! [[ "$node_input" =~ ^[0-9]+$ ]]; then
+        echo -e "  ${YL}[WARN]${RS} Invalid input, fallback to nodes=1"
+        node_value="1"
+    elif [[ "$node_input" == "1" ]]; then
+        node_value="1"
+    else
+        node_value="node${node_input}.hpc.local"
     fi
 
     # --- VASP binary selection ---
@@ -94,7 +98,7 @@ generate_pbs_script() {
     cat > "$pbs_out" <<EOF
 #!/bin/bash
 #PBS -N $sys_name
-#PBS -l nodes=$node_count:ppn=$ppn
+#PBS -l nodes=$node_value:ppn=$ppn
 #PBS -l walltime=$walltime
 #PBS -q $queue_name
 #PBS -j oe
