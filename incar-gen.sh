@@ -6,8 +6,8 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INCAR_GEN="$SCRIPT_DIR/incar_gen.py"
-POTCAR_GEN="$SCRIPT_DIR/potcar_gen.py"
-MODULE14_SCRIPT="$SCRIPT_DIR/module14/jobscript.sh"
+POTCAR_GEN="$SCRIPT_DIR/potcar/potcar_gen.py"
+MODULE14_SCRIPT="$SCRIPT_DIR/pbs/jobscript.sh"
 
 # ── Colours ──────────────────────────────────────────────────────────────────
 if [ -t 1 ] && command -v tput &>/dev/null && tput colors &>/dev/null; then
