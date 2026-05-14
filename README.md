@@ -1,7 +1,7 @@
 # VASP INCAR Generator
 
 An interactive TUI tool for generating VASP INCAR files from a POSCAR.  
-Packaged as `incar/` with `incar_gen.py` and the shell menu `incar-genner.sh`.
+Packaged as `incar/` with `incar_gen.py` and the shell menu `incar-gen.sh`.
 
 ---
 
@@ -16,11 +16,11 @@ pip install questionary rich   # required for interactive mode only
 Then add the following alias to your `~/.bashrc` for quick access:
 
 ```bash
-echo "alias incar-genner='bash \$HOME/vasp-incar-generator/incar-genner.sh'" >> ~/.bashrc
+echo "alias incar-gen='bash \$HOME/vasp-incar-generator/incar-gen.sh'" >> ~/.bashrc
 source ~/.bashrc
 ```
 
-Now you can run the tool from anywhere by typing `incar-genner`.
+Now you can run the tool from anywhere by typing `incar-gen`.
 
 ---
 
@@ -52,7 +52,7 @@ notes/
 ├── INCAR-cheatsheet.md          ← INCAR tags quick reference
 ├── vasp-analysis-tutorials.md   ← post-processing & analysis notes
 └── vasp-convergence-troubleshooting.md  ← convergence issue solutions
-incar-genner.sh       ← interactive shell menu
+incar-gen.sh       ← interactive shell menu
 ```
 
 ---
@@ -211,7 +211,7 @@ Example — hexagonal cell `a=(3,0,0)`, `b=(-1.5,2.6,0)`, `c=(0,0,20)`:
 ## Shell Menu
 
 ```bash
-bash incar-genner.sh
+bash incar-gen.sh
 ```
 
 The shell menu provides common VASP setup helpers:
