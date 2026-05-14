@@ -34,10 +34,15 @@ incar/
 ├── dielectric.py
 ├── phonon.py
 ├── neb.py
-└── soc.py
+├── soc.py
+└── zpe.py            ← ZPE correction (IBRION=5, NFREE=2)
 kpoints/
 ├── __init__.py       ← re-exports kgen API
 └── kgen.py           ← KPOINTS file / KSPACING wizard
+notes/
+├── INCAR-cheatsheet.md          ← INCAR tags quick reference
+├── vasp-analysis-tutorials.md   ← post-processing & analysis notes
+└── vasp-convergence-troubleshooting.md  ← convergence issue solutions
 incar-genner.sh       ← interactive shell menu
 ```
 
@@ -207,15 +212,24 @@ The shell menu provides common VASP setup helpers:
 | `11` | Launch the interactive INCAR generator |
 | `12` | Generate KPOINTS or append KSPACING from an INCAR |
 | `13` | Generate POTCAR from POSCAR elements |
-| `14` | Generate a PBS job script only |
+| `14` | PBS script generator (queue selection + auto ppn/walltime) |
 | `15` | VASP utility tools (status/restart/backup/clean) |
 
 ### PBS script generator
 
-Option `14` directly asks for the system name, runs `pestat` when available, then asks for:
+Option `14` asks for the system name, runs `pestat` when available, then presents a queue selection menu:
 
-- Node name, written as `nodes=<node>:ppn=<ppn>`
-- Core count, used by both `ppn` and `mpirun -np`
+| Queue | Walltime | PPN | State |
+|-------|----------|-----|-------|
+| debug | 30 min | 4 | OPEN |
+| short | 2 hours | 32 | CLOSE |
+| normal | 72 hours (3 days) | 48 | OPEN |
+| fat | 1680 hours (70 days) | 64 | OPEN |
+| long | 720 hours (30 days) | 96 | OPEN |
+
+After selecting a queue, `ppn` and `walltime` are set automatically. Then asks for:
+
+- Node: input `1` (default) → `nodes=1`, input other number (e.g. `24`) → `nodes=node24.hpc.local`
 - VASP binary type: `std` or `gam`, default `std`
 - Output file name, default `vasp.pbs`
 
