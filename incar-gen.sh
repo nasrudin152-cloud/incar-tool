@@ -8,6 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INCAR_GEN="$SCRIPT_DIR/incar_gen.py"
 POTCAR_GEN="$SCRIPT_DIR/potcar/potcar_gen.py"
 MODULE14_SCRIPT="$SCRIPT_DIR/pbs/jobscript.sh"
+BADER_SCRIPT="$SCRIPT_DIR/utils/bader.py"
 
 # ── Colours ──────────────────────────────────────────────────────────────────
 if [ -t 1 ] && command -v tput &>/dev/null && tput colors &>/dev/null; then
@@ -135,28 +136,6 @@ vasp_tool_status() {
     pause
 }
 
-vasp_tool_restart_from_contcar() {
-    banner
-    echo -e "  ${BD}Prepare Restart (CONTCAR -> POSCAR)${RS}"
-    sep
-
-    if [[ ! -f CONTCAR ]]; then
-        echo -e "  ${RD}[ERROR]${RS} CONTCAR not found."
-        pause
-        return
-    fi
-
-    ts=$(date +%Y%m%d_%H%M%S)
-    if [[ -f POSCAR ]]; then
-        cp POSCAR "POSCAR.bak.$ts"
-        echo "  Backup: POSCAR.bak.$ts"
-    fi
-
-    cp CONTCAR POSCAR
-    echo -e "  ${GR}[OK]${RS} POSCAR updated from CONTCAR."
-    pause
-}
-
 vasp_tool_backup_results() {
     banner
     echo -e "  ${BD}Backup Key VASP Files${RS}"
@@ -211,24 +190,34 @@ vasp_tool_clean_outputs() {
     pause
 }
 
+vasp_tool_bader() {
+    banner
+    echo -e "  ${BD}Bader Charge Transfer Analysis${RS}"
+    sep
+    read -rp "  Work directory [.]: " wdir
+    wdir="${wdir:-.}"
+    python3 "$BADER_SCRIPT" "$wdir"
+    pause
+}
+
 utility_menu() {
     while true; do
         banner
         echo -e "  ${BD}15  VASP Utility Tools${RS}"
         sep
         item 51 "Quick status (convergence + final energy)"
-        item 52 "Prepare restart (copy CONTCAR to POSCAR)"
         item 53 "Backup key VASP files"
         item 54 "Clean large VASP output files"
+        item 55 "Bader charge transfer analysis"
         echo
         item  0 "Back to main menu"
         echo
         read -rp "  Enter option: " opt
         case "$opt" in
             51) vasp_tool_status ;;
-            52) vasp_tool_restart_from_contcar ;;
             53) vasp_tool_backup_results ;;
             54) vasp_tool_clean_outputs ;;
+            55) vasp_tool_bader ;;
              0) return ;;
              *) echo -e "  ${RD}Unknown option.${RS}"; sleep 1 ;;
         esac
