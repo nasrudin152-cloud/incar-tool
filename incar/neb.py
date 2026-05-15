@@ -1,10 +1,10 @@
 """build_neb() — nudged elastic band transition-state search."""
 from __future__ import annotations
 
-from .defaults import common_base
+from .defaults import common_base, add_ldau
 
 
-def build_neb(info: dict, spin: bool, images: int = 5) -> dict:
+def build_neb(info: dict, spin: bool, images: int = 5, ldau: bool = False) -> dict:
     tags = common_base(info, spin)
     tags.update({
         "IBRION": "3",
@@ -15,4 +15,6 @@ def build_neb(info: dict, spin: bool, images: int = 5) -> dict:
         "IMAGES": str(images),
         "LCLIMB": ".TRUE.",
     })
+    if ldau:
+        add_ldau(tags, info)
     return tags

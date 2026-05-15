@@ -1,10 +1,10 @@
 """build_hse() — HSE06 hybrid functional (static or relax)."""
 from __future__ import annotations
 
-from .defaults import common_base
+from .defaults import common_base, add_ldau
 
 
-def build_hse(info: dict, spin: bool, calc: str = "scf") -> dict:
+def build_hse(info: dict, spin: bool, calc: str = "scf", ldau: bool = False) -> dict:
     tags = common_base(info, spin)
     tags.update({
         "GGA":      "PE",
@@ -28,4 +28,6 @@ def build_hse(info: dict, spin: bool, calc: str = "scf") -> dict:
             "LWAVE":  ".FALSE.",
             "LCHARG": ".FALSE.",
         })
+    if ldau:
+        add_ldau(tags, info)
     return tags

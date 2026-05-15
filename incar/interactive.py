@@ -33,6 +33,7 @@ from .dielectric import build_dielectric
 from .phonon import build_phonon
 from .neb import build_neb
 from .soc import build_soc
+from .zpe import build_zpe
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -387,14 +388,16 @@ def _wizard(info: dict, calc_type: str, console) -> tuple | str:
                         pstress=_float_or(results.get("pstress", "0.0"), 0.0))
     elif calc_type in ("hse", "hse-relax"):
         tags = build_hse(info, spin,
-                         calc="relax" if calc_type == "hse-relax" else "scf")
+                         calc="relax" if calc_type == "hse-relax" else "scf",
+                         ldau=ldau)
     elif calc_type == "dielectric":
         tags = build_dielectric(info, spin)
     elif calc_type == "phonon":
         tags = build_phonon(info, spin)
     elif calc_type == "neb":
         tags = build_neb(info, spin,
-                         images=_int_or(results.get("images", "5"), 5))
+                         images=_int_or(results.get("images", "5"), 5),
+                         ldau=ldau)
     elif calc_type == "soc":
         tags = build_soc(info, saxis=results.get("soc_saxis", "0 0 1"))
     elif calc_type == "zpe":

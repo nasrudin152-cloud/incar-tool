@@ -184,13 +184,14 @@ def main():
                         pmass=args.pmass,
                         pstress=args.pstress)
     elif ct in ("hse", "hse-relax"):
-        tags = build_hse(info, spin, calc="relax" if ct == "hse-relax" else "scf")
+        tags = build_hse(info, spin, calc="relax" if ct == "hse-relax" else "scf",
+                         ldau=ldau)
     elif ct == "dielectric":
         tags = build_dielectric(info, spin)
     elif ct == "phonon":
         tags = build_phonon(info, spin)
     elif ct == "neb":
-        tags = build_neb(info, spin, args.images)
+        tags = build_neb(info, spin, args.images, ldau=ldau)
     elif ct == "soc":
         tags = build_soc(info)
     elif ct == "zpe":
