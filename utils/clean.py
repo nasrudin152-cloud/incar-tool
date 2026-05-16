@@ -2,8 +2,8 @@
 """
 54 — Clean Large VASP Output Files
 
-Removes common large VASP output files from the current directory.
-Prompts for confirmation before deleting.
+Lists files that would be removed, lets the user exclude specific ones,
+then deletes the rest. Prompts for confirmation before deleting.
 Can be called standalone or imported by the shell menu.
 """
 
@@ -12,34 +12,54 @@ import shutil
 
 OUTPUT_FILES = [
     "CHG", "CHGCAR", "DOSCAR", "EIGENVAL", "ELFCAR", "IBZKPT", "LOCPOT",
-    "OSZICAR", "PCDAT", "PROCAR", "REPORT", "vasprun.xml",
+    "OSZICAR", "OUTCAR", "PCDAT", "PROCAR", "REPORT", "vasprun.xml",
     "WAVECAR", "XDATCAR", "AECCAR0", "AECCAR1", "AECCAR2", "BSEFATBAND",
 ]
 
 
-def vasp_tool_clean_outputs(confirm=None):
-    """Remove common large VASP output files after confirmation.
+def vasp_tool_clean_outputs(exclude=None):
+    """Remove common large VASP output files with optional exclusions.
 
     Args:
-        confirm: Pass 'yes' to skip the interactive prompt (useful for scripting).
+        exclude: Collection of filenames to keep. If None, prompts interactively.
     """
-    if confirm is None:
-        confirm = input("  Type 'yes' to remove large VASP output files: ").strip()
+    existing = [f for f in OUTPUT_FILES if os.path.exists(f)]
 
-    if confirm != "yes":
-        print("  Canceled.")
+    if not existing:
+        print(f"  Nothing to clean in {os.getcwd()}.")
         return
 
-    removed = 0
-    for fname in OUTPUT_FILES:
-        if os.path.exists(fname):
-            if os.path.isdir(fname):
-                shutil.rmtree(fname)
+    print("  [WARN] The following files will be removed:\n")
+    for f in existing:
+        print(f"    · {f}")
+    print()
+
+    if exclude is None:
+        raw = input(
+            "  To exclude files, enter names separated by spaces.\n"
+            "  Press Enter to delete all, or type 'cancel' to abort: "
+        ).strip()
+        if raw.lower() == "cancel":
+            print("  Canceled.")
+            return
+        exclude = set(raw.split()) if raw else set()
+    else:
+        exclude = set(exclude)
+
+    removed = skipped = 0
+    for f in existing:
+        if f in exclude:
+            print(f"  skipped : {f}")
+            skipped += 1
+        else:
+            if os.path.isdir(f):
+                shutil.rmtree(f)
             else:
-                os.remove(fname)
+                os.remove(f)
+            print(f"  removed : {f}")
             removed += 1
 
-    print(f"  [OK] Removed items : {removed}")
+    print(f"\n  [OK] Removed: {removed}  |  Skipped: {skipped}")
 
 
 if __name__ == "__main__":

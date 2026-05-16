@@ -312,7 +312,6 @@ def _wizard(info: dict, calc_type: str, console) -> tuple | str:
             if r == _BACK:
                 idx -= 1; continue
             results["pstress"] = r
-
         # ── NEB images ────────────────────────────────────────────────────────
         elif name == "images":
             r = _text_back("Number of NEB images:", default="5")
@@ -518,6 +517,6 @@ def interactive_mode() -> None:
                     "  [dim]  (Z-axis fixed: a·z, b·z, c-vector all constrained)[/dim]"
                 )
             console.print()
+            break  # done — exit the outer while loop
         else:
-            console.print("  [yellow]Cancelled.[/yellow]")
-        break
+            console.print("  [yellow]Cancelled. Returning to output path prompt.[/yellow]\n")

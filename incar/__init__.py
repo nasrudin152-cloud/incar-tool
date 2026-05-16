@@ -28,14 +28,14 @@ CALC_BUILDERS: dict = {
     "scf":        build_scf,
     "band":       build_band,
     "dos":        build_dos,
-    "md":         build_md,
-    "hse":        build_hse,
-    "hse-relax":  lambda info, spin, ldau, soc: build_hse(info, spin, calc="relax"),
-    "dielectric": build_dielectric,
-    "phonon":     build_phonon,
-    "neb":        build_neb,
-    "soc":        build_soc,
-    "zpe":        build_zpe,
+    "hse":        lambda info, spin, ldau, soc: build_hse(info, spin, calc="scf",   ldau=ldau),
+    "hse-relax":  lambda info, spin, ldau, soc: build_hse(info, spin, calc="relax", ldau=ldau),
+    "dielectric": lambda info, spin, ldau, soc: build_dielectric(info, spin),
+    "phonon":     lambda info, spin, ldau, soc: build_phonon(info, spin),
+    "md":         lambda info, spin, ldau, soc: build_md(info, spin),
+    "neb":        lambda info, spin, ldau, soc: build_neb(info, spin, ldau=ldau),
+    "soc":        lambda info, spin, ldau, soc: build_soc(info),
+    "zpe":        lambda info, spin, ldau, soc: build_zpe(info, spin),
 }
 
 __all__ = [

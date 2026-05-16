@@ -22,7 +22,8 @@ def vasp_tool_status(outcar="OUTCAR", oszicar="OSZICAR"):
             for line in f:
                 if "reached required accuracy" in line:
                     converged = True
-                m = re.search(r"free\s+energy\s+TOTEN\s*=\s*([-\d.]+)", line)
+                # TOTEN line: "  free  energy   TOTEN  =   -123.456 eV"
+                m = re.search(r"free\s+energy\s+TOTEN\s*=\s*([-\d.eE+]+)", line)
                 if m:
                     toten = m.group(1)
 
@@ -38,7 +39,8 @@ def vasp_tool_status(outcar="OUTCAR", oszicar="OSZICAR"):
         with open(oszicar) as f:
             for line in f:
                 last_line = line.rstrip()
-                m = re.search(r"E0=\s*([-\d.E+]+)", line)
+                # E0= value may be directly adjacent: "E0= -123.456"
+                m = re.search(r"E0=\s*([-\d.eE+]+)", line)
                 if m:
                     e0 = m.group(1)
         if e0:
