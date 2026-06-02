@@ -1,10 +1,10 @@
 """build_zpe() — ZPE correction via finite differences (IBRION=5)."""
 from __future__ import annotations
 
-from .defaults import common_base
+from .defaults import common_base, add_ldau
 
 
-def build_zpe(info: dict, spin: bool, nfree: int = 2) -> dict:
+def build_zpe(info: dict, spin: bool, nfree: int = 2, ldau: bool = False) -> dict:
     tags = common_base(info, spin, ediff="1E-6")
     tags.update({
         "NSW":     "1",
@@ -15,4 +15,6 @@ def build_zpe(info: dict, spin: bool, nfree: int = 2) -> dict:
         "LWAVE":   ".FALSE.",
         "LCHARG":  ".FALSE.",
     })
+    if ldau:
+        add_ldau(tags, info)
     return tags

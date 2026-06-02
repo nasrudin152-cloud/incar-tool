@@ -31,6 +31,8 @@ LDAU_L: dict[str, int] = {
     "W":  2, "Ce": 3, "Gd": 3,
 }
 
+NO_DEFAULT_VDW_TYPES: set[str] = {"phonon", "dielectric"}
+
 # ── Global defaults shared by ALL INCAR types ─────────────────────────────────
 
 _BASE: dict[str, str] = {
@@ -44,9 +46,7 @@ _BASE: dict[str, str] = {
     "SIGMA":  "0.05",
     "LWAVE":  ".FALSE.",
     "LCHARG": ".FALSE.",
-    "NCORE":  "4",
     "ISYM":   "0",
-    "IVDW":   "11",
     "EDIFFG": "-0.05",
     "LORBIT": "11",
 }
@@ -69,6 +69,13 @@ def common_base(info: dict, spin: bool, ediff: str = "1E-5") -> dict:
         tags["MAGMOM"] = info["magmom_str"]
     else:
         tags["ISPIN"] = "1"
+    return tags
+
+
+def apply_task_defaults(tags: dict, calc_type: str) -> dict:
+    """Apply defaults that depend on the calculation type."""
+    if calc_type not in NO_DEFAULT_VDW_TYPES:
+        tags.setdefault("IVDW", "11")
     return tags
 
 

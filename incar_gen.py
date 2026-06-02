@@ -13,7 +13,7 @@ from incar import (
     parse_poscar, format_incar, interactive_mode,
     build_relax, build_scf, build_band, build_dos, build_md,
     build_hse, build_dielectric, build_phonon, build_neb, build_soc, build_zpe,
-    CALC_BUILDERS,
+    CALC_BUILDERS, apply_task_defaults,
 )
 from kpoints import kgen_mode
 
@@ -26,7 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Calculation types (-t):
-  relax       Structural relaxation (IBRION=2, ISIF=3)
+  relax       Structural relaxation (IBRION=2, ISIF=2)
   scf         Static single-point (saves WAVECAR+CHGCAR)
   band        Band structure (reads CHGCAR, ICHARG=11)
   dos         Density of states (ISMEAR=-5)
@@ -67,9 +67,9 @@ Examples:
 
     # LDA+U
     p.add_argument("--ldau", action="store_true",
-                   help="Enable LDA+U (auto-enabled if d/f elements detected)")
+                   help="Enable LDA+U for detected d/f-element candidates")
     p.add_argument("--no-ldau", action="store_true",
-                   help="Disable LDA+U even if d/f elements detected")
+                   help="Disable LDA+U")
 
     # SOC
     p.add_argument("--soc", action="store_true",
@@ -94,6 +94,10 @@ Examples:
 
     # NEB options
     p.add_argument("--images", type=int, default=5, help="Number of NEB images")
+
+    # Relax options
+    p.add_argument("--isif", type=int, choices=[2, 3, 4, 7], default=2,
+                   help="Relaxation mode for -t relax (default: 2; use 3 for full cell relaxation)")
 
     # ENCUT override
     p.add_argument("--encut", type=int, help="Override ENCUT (eV)")
@@ -151,7 +155,7 @@ def main():
     # Determine LDA+U
     if args.no_ldau:
         ldau = False
-    elif args.ldau or bool(info["ldau_elements"]):
+    elif args.ldau:
         ldau = True
     else:
         ldau = False
@@ -165,7 +169,7 @@ def main():
     # Build INCAR tags
     ct = args.calc_type
     if ct == "relax":
-        tags = build_relax(info, spin, ldau, soc)
+        tags = build_relax(info, spin, ldau, soc, isif=args.isif)
     elif ct == "scf":
         tags = build_scf(info, spin, ldau, soc)
     elif ct == "band":
@@ -195,7 +199,7 @@ def main():
     elif ct == "soc":
         tags = build_soc(info)
     elif ct == "zpe":
-        tags = build_zpe(info, spin)
+        tags = build_zpe(info, spin, ldau=ldau)
 
     # Post-processing overrides
     if args.encut:
@@ -203,6 +207,7 @@ def main():
     if args.metal:
         tags["ISMEAR"] = "0"
         tags["SIGMA"] = "0.2"
+    apply_task_defaults(tags, ct)
 
     incar_text = format_incar(tags, ct)
 

@@ -85,9 +85,9 @@ All calculation types share these base parameters (overridden per type where nee
 | `ISMEAR` | 0 | Gaussian; metallic mode keeps ISMEAR=0 |
 | `SIGMA` | 0.05 | metallic: 0.2 |
 | `ISYM` | 0 | |
-| `IVDW` | 11 | DFT-D3 dispersion correction |
+| `IVDW` | 11 | DFT-D3 by task type; omitted for DFPT phonon/dielectric |
 | `LORBIT` | 11 | projected DOS |
-| `NCORE` | 4 | no NPAR |
+| `NCORE` | unset | choose per machine/job script |
 | `LWAVE` | .FALSE. | .TRUE. for scf, hse |
 | `LCHARG` | .FALSE. | .TRUE. for scf, hse |
 
@@ -197,7 +197,7 @@ Arrow-key menus and back navigation at every step:
 1. **POSCAR path** — tab-completion, validates file existence  
 2. **Structure summary** — elements, atom counts, magnetic / heavy / LDA+U detection  
 3. **Calculation type** — arrow-key select (← Back re-enters POSCAR path)  
-4. **Spin / LDA+U / SOC / Smearing** — Yes / No / ← Back at each step (default: No)  
+4. **Spin / LDA+U / SOC / Smearing** — Yes / No / ← Back at each step (default: No)
 5. **ENCUT** — text input, default 450, type `b` to go back  
 6. **Type-specific params** — NSW, ISIF, temperatures, NEB images …  
    - ISIF=3 → optional **fix-Z** prompt → writes `OPTCELL` derived from actual lattice vectors  

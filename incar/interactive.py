@@ -23,6 +23,7 @@ except ImportError:
 
 from .poscar import parse_poscar, gen_optcell_fix_z
 from .formatter import format_incar
+from .defaults import apply_task_defaults
 from .relax import build_relax
 from .scf import build_scf
 from .band import build_band
@@ -120,12 +121,12 @@ def _wizard(info: dict, calc_type: str, console) -> tuple | str:
     # spin is prompted unless it is forced (soc → True, phonon/dielectric → auto)
     if calc_type == "soc":
         fixed_spin: bool | None = True
-    elif calc_type in ("dielectric", "phonon", "zpe"):
+    elif calc_type in ("dielectric", "phonon"):
         fixed_spin = info["is_magnetic"]
     else:
         fixed_spin = None  # will be prompted
 
-    need_ldau  = calc_type not in ("md", "phonon", "dielectric", "zpe")
+    need_ldau  = calc_type not in ("md", "phonon", "dielectric")
     need_soc   = calc_type in ("band", "scf", "relax", "soc")
     need_smear = calc_type not in ("dos", "md", "phonon", "dielectric", "zpe")
 
@@ -400,9 +401,11 @@ def _wizard(info: dict, calc_type: str, console) -> tuple | str:
     elif calc_type == "soc":
         tags = build_soc(info, saxis=results.get("soc_saxis", "0 0 1"))
     elif calc_type == "zpe":
-        tags = build_zpe(info, spin)
+        tags = build_zpe(info, spin, ldau=ldau)
     else:
         tags = {}
+
+    apply_task_defaults(tags, calc_type)
 
     return tags, fix_z, encut_override, metal
 

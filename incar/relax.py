@@ -10,7 +10,7 @@ def build_relax(
     ldau: bool,
     soc: bool,
     nsw: int = 300,
-    isif: int = 3,
+    isif: int = 2,
 ) -> dict:
     tags = common_base(info, spin)
     tags.update({

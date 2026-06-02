@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.11
 """potcar_gen.py — CLI entry point for VASP POTCAR generation.
 
 Usage:
